@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contact Me</title>
+    <script defer src="js/main.js"></script>
+    <link rel="stylesheet" href="css/main.css"></link>
+    <script>
+    function submitToAPI(e) {
+        e.preventDefault();
+        var URL = "https://dp8tcn7jak.execute-api.us-west-2.amazonaws.com/contact/email";
+
+
+    var name = document.getElementById("name-input").value;
+    var phone = document.getElementById("phone-input").value;
+    var email = document.getElementById("email-input").value;
+    var message = document.getElementById("description-input").value;
+    if (name=="" || phone=="" || email=="" || message=="")
+     {
+         alert("Please Fill All Required Field");
+         return false;
+     }
+     
+     nameRE = /^[A-Z]{1}[a-z]{2,20}[ ]{1}[A-Z]{1}[a-z]{2,20}/;
+     if(!nameRE.test(name)) {
+         alert("Name entered, is not valid");
+             return false;
+     }
+        
+      
+     phoneRE = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
+     if(!phoneRE.test(phone)) {
+             alert("Phone number entered, is not valid");
+             return false;
+         }
+     
+     emailRE = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+     if(!emailRE.test(email)) {
+         alert("Email Address entered, is not valid");
+             return false;
+     }
+    var data = {
+       name : name,
+       phone : phone,
+       email : email,
+       message : message
+     };
+
+     var xmlhttp = new XMLHttpRequest();
+     xmlhttp.open("POST", "https://dp8tcn7jak.execute-api.us-west-2.amazonaws.com/contact/email");
+     xmlhttp.setRequestHeader("Content-Type", "application/json");
+     xmlhttp.send(JSON.stringify(data));
+     xmlhttp.onreadystatechange = function() {
+     if (xmlhttp.readyState === 4) {
+         var response = JSON.parse(xmlhttp.responseText);
+         if (xmlhttp.status === 200 ) {
+             console.log('successful');
+             document.getElementById("contact-form").innerHTML = "<h1>Thank you for your message<br>our team will get back to you soon!</h1>";
+         } else {
+             console.log('failed');
+         }
+     }
+ }
+ 
+ document.getElementById('contact-form').reset();
+   
+} 
+
+    </script>
+</head>
+<body>
+    <form id="contact-form" method="POST">
+        <h4>Name:</h4>
+      <input type="text" id="name-input" placeholder="Enter name here" class="form-control" /><br/>
+      <h4>Phone:</h4>
+      <input type="phone" id="phone-input" placeholder="Enter phone number" class="form-control"/><br/>
+      <h4>Email:</h4>
+      <input type="email" id="email-input" placeholder="Enter email here" class="form-control"/><br/>
+      <h4>Leave your message here</h4>
+      <textarea id="description-input" rows="7" placeholder="Enter your message…" class="form-control"></textarea><br/>
+      <div class="g-recaptcha" data-sitekey="6Lc7cVMUAAAAAM1yxf64wrmO8gvi8A1oQ_ead1ys" class="form-control"></div>
+      <button type="button" onClick="submitToAPI(event)" class="btn btn-lg">Submit</button>
+  </form>
+</body>
+</html>
